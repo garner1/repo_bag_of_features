@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+BAG-OF-FEATURES FOR TRANSCRIPTOMIC IMAGE-CLASSIFICATION
 """
 Created on Thu Apr  9 16:45:36 2015
 
