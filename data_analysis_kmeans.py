@@ -13,14 +13,8 @@ from sklearn.preprocessing import scale
 # Load data matrix [samples X features]
 #features: case#,x,y,size,angle,response,octave,class_id
 #==============================================================================
-data = np.load('dataout/dataPoints_a594.npy')
-#data = np.load('dataout/dataPoints_cy5.npy')
-#==============================================================================
-# Threshold wrt to size of the feature
-#==============================================================================
-threshold = np.percentile(data[:,3],20)
-rowboolean = data[:,3]<=threshold
-data = np.compress(rowboolean, data, axis=0)
+#data = np.load('dataout/filtered_a594.npy')
+data = np.load('dataout/filtered_cy5.npy')
 #==============================================================================
 # Store all cases label in var cases
 #==============================================================================
@@ -30,7 +24,9 @@ cases = np.unique(data[:,0])
 #==============================================================================
 datacloud = data[:,8:]
 #==============================================================================
-# Partition data cloud using kmeans
+# Partition data cloud using kmeans.
+# kmeans works well with euclidean distances, not others, (not good for hist).
+# It is good to scale data before in order not to bias on specif features.
 #==============================================================================
 datacloud = scale(datacloud)
 n_samples, n_features = datacloud.shape
@@ -39,37 +35,25 @@ km = KMeans(n_clusters=n_clusters, init='k-means++', n_init=10, max_iter=100,
             tol=0.0001, precompute_distances='auto', verbose=0, 
             random_state=None, copy_x=True, n_jobs=-1)
 km.fit(datacloud)    
-centroids = km.cluster_centers_ #coordinates of centroids
+centroids = km.cluster_centers_ #coordinates of centroids [numb_c X 128]
 labels = km.labels_ #labels of centroids
-#==============================================================================
-# normalize the centroids
-#==============================================================================
-#for ind in xrange(n_clusters):
-#    centroids[ind,:] = np.true_divide(centroids[ind,:],np.linalg.norm(centroids[ind,:]))
 #==============================================================================
 # Subselect the most variable features and cluster on that, or simply do 
 # hierarchical clustering on data
 #==============================================================================
 states = []
 for case in cases:
+#    case = cases[1]
     subset = data[:,0]==case
-    histdata = labels[np.where(subset==True)[0]]
-    id_counts = np.unique(histdata,return_counts=True)
+    histdata = labels[np.where(subset==True)[0]] #select all the cluster labels for the case
+    id_counts = np.unique(histdata,return_counts=True) #id_counts is a 2 element list
     centroids_id = id_counts[0]
-#==============================================================================
-#     Prepare the state (pure state superposition)
-#    TODO: check normalization
-#==============================================================================
     centroids_counts = id_counts[1]
-    state = np.zeros((1,np.shape(centroids)[1]))    
-    for centroid in centroids_id:
-        #Error: IndexError: index 19 is out of bounds for axis 0 with size 19!!!
-        state = state + centroids_counts[centroid]*centroids[centroid,:]
-    states.append(state)
+    states.append(centroids_counts)
 #==============================================================================
 # Plot the histrogram
 #==============================================================================
-    plt.title(str(case))
+    plt.title(str(int(case)))
 #    plt.ylim([0,centroids_counts.max()])
     plt.bar(xrange(len(centroids_counts)), centroids_counts)
     plt.draw()
@@ -78,7 +62,10 @@ for case in cases:
 #==============================================================================
 # Save the states
 #==============================================================================
-np.savetxt('partitioning_data_20clusters_notnormalized.csv', np.vstack(pure_states), delimiter=',')
+#np.save('./dataout/centroid_coord_a594',centroids)        
+#np.savetxt('dataout/bof_data_20clusters_a594.csv', np.vstack(states), delimiter=',')
+np.save('./dataout/centroid_coord_cy5',centroids)        
+np.savetxt('dataout/bof_data_20clusters_cy5.csv', np.vstack(states), delimiter=',')
 #==============================================================================
 # Efficient selection of case 
 #==============================================================================

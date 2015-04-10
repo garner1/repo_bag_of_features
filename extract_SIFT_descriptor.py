@@ -5,7 +5,7 @@ Created on Wed Mar 18 14:18:54 2015
 @author: silvano
 """
 import os
-from module import Massage, pack_keypoint, write_features_to_file, get_similar_descriptors
+from module import Massage, pack_keypoint
 import subprocess 
 import numpy as np
 import cv2
@@ -13,12 +13,7 @@ import itertools
 #import time
 #import matplotlib.pyplot as plt
 #import skimage
-#import pandas as pd
 
-#==============================================================================
-# Parameters
-#==============================================================================
-numb_of_tiff_images = 1
 #==============================================================================
 # Check if output data file already exists
 #==============================================================================
@@ -39,13 +34,14 @@ f = open('./datain/mat_files_list.txt','r')
 #==============================================================================
 # for each line in the list of valid files
 #==============================================================================
-ii = 0 
-for line in itertools.islice(f, numb_of_tiff_images):
-#for line in f:    
+ii = 0 #counts iteration in the loop
+numb_of_tiff_images = 1
+for line in itertools.islice(f, numb_of_tiff_images): #to parse a limited numb of images
+#for line in f:    #to parse all images
     ii += 1
     print ii, ' of 2977'
 #==============================================================================
-#     locate the path to the tif file
+#     parse the path to the tif file
 #==============================================================================
 #    filename = f.readline()
     filename = line
@@ -79,28 +75,34 @@ for line in itertools.islice(f, numb_of_tiff_images):
 #==============================================================================
 # Plot the images and the keypoints
 #==============================================================================
-    imagedot=cv2.drawKeypoints(img,k_tmp,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    cv2.imwrite('sift_keypoints.jpg',imagedot)
-    cv2.imwrite('original.jpg',img)
+#    imagedot=cv2.drawKeypoints(img,k_tmp,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+#    cv2.imwrite('sift_keypoints.jpg',imagedot)
+#    cv2.imwrite('original.jpg',img)
 #==============================================================================
 # Pack data together
 #==============================================================================
     k_tmp, des_tmp = pack_keypoint(k_tmp,des_tmp)
-    tag1 = np.reshape(np.asarray([tag for i in range(len(k_tmp))]),(len(k_tmp),1))    
-    k_tmp = np.hstack((tag1, k_tmp))
-    tag2 = np.asarray([number for i in range(len(k_tmp))])    
-    k_tmp[:,-1] = tag2
+    case_tag = np.reshape(np.asarray([tag for i in range(len(k_tmp))]),(len(k_tmp),1))    
+    k_tmp = np.hstack((case_tag, k_tmp)) #add the case label to data array
+    img_tag = np.asarray([number for i in range(len(k_tmp))])    
+    k_tmp[:,-1] = img_tag #add img number to data
     if ii==1: 
         k = k_tmp
         des = des_tmp
     else:
         k = np.vstack((k,k_tmp))
         des = np.vstack((des,des_tmp))
-#    cluster_centers=get_similar_descriptors(100, des)
 #==============================================================================
-#   Store keypoints    
+#   Store keypoints  
+# save data matrix [samples X features]
+# features: case#,x,y,size,angle,response,octave,img_id, descriptor(128)
 #==============================================================================
-#write_features_to_file('./dataout/dataPoints',k,des)
+#write_features_to_file('./dataout/dataPoints_a594',k,des)
+#write_features_to_file('./dataout/dataPoints_cy5',k,des)
+
+#==============================================================================
+#==============================================================================
+#==============================================================================
 #==============================================================================
 #   Timing
 #==============================================================================

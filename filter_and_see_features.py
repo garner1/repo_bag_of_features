@@ -12,26 +12,21 @@ from module import Massage
 import scipy
 #==============================================================================
 # Load data matrix [samples X features]
-#features: case#,x,y,size,angle,response,octave,img_id, descriptor(128)
+# features: case#,x,y,size,angle,response,octave,img_id, descriptor(128)
 #==============================================================================
 size_threshold = 7 #this correspond to the mean value of the size in cy5
+
 data_a594 = np.load('dataout/dataPoints_a594.npy')
-#data_a594 = data_a594[:,:8]
 rowboolean = data_a594[:,3]<=size_threshold
 data_a594 = np.compress(rowboolean, data_a594, axis=0)
+
 data_cy5 = np.load('dataout/dataPoints_cy5.npy')
-#data_cy5 = data_cy5[:,:8]
 rowboolean = data_cy5[:,3]<=size_threshold
 data_cy5 = np.compress(rowboolean, data_cy5, axis=0)
 #==============================================================================
-# Store all cases label in var cases
+# Store all cases label in var cases, does not matter to use data_a594 or data_cy5
 #==============================================================================
 cases = np.unique(data_a594[:,0])
-#==============================================================================
-# Threshold wrt to size of the feature
-#==============================================================================
-#threshold_percentile = 50 #smallest xx% of features
-#size_threshold = np.percentile(data_all[:,3],threshold_percentile)
 #==============================================================================
 # Location of the tif files
 #==============================================================================
@@ -55,11 +50,11 @@ dictionary = {6392:'220113_caso_6392_11_N2',6927:'010312_caso_6927_11_N2',11664:
 #==============================================================================
 # Parse data 
 #==============================================================================
-ii = 0
+ii = 0 #counter in the loop
 for case in cases:
 #    case=cases[0]
     ii += 1
-    print ii
+    print 'case number '+ii+' of 49...'
     rowboolean_a594 = data_a594[:,0]==case 
     rowboolean_cy5 = data_cy5[:,0]==case
     case_data_a594 = np.compress(rowboolean_a594, data_a594, axis=0) 

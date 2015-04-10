@@ -1,10 +1,9 @@
-mydata = read.csv('cy5_pca_c20_t10.csv', header=FALSE)
-#mydata = read.csv('a594_pca_c20_t10.csv', header=FALSE)
-#mydata = read.csv('cy5_pca_data_50comp_normalized.csv', header=FALSE)
-#mydata = read.csv('cy5_pca_data_20comp_normalized.csv', header=FALSE)
-#mydata = read.csv('partitioning_data_20clusters_notnormalized.csv', header=FALSE)
-#mydata = read.csv('pca_data_20comp_notnormalized.csv', header=FALSE)
-#mydata = read.csv('minibatchkmeans_data.csv', header=FALSE)
+filename1 = 'dataout/bof_data_20clusters_a594.csv'
+filename2 = 'dataout/bof_data_20clusters_cy5.csv'
+mydata1 = read.csv(filename1, header=FALSE)
+mydata2 = read.csv(filename2, header=FALSE)
+mydata = mydata2
+mydata <- cbind( mydata1 , mydata2 )
 # Ward Hierarchical Clustering
 rownames(mydata) = c(165,    375,    475,    559,    705,    740,    913,
   1126,   1261,   1312,   1517,   1630,   1689,   1867,
@@ -13,14 +12,14 @@ rownames(mydata) = c(165,    375,    475,    559,    705,    740,    913,
   5933,   6120,   6392,   6474,   6555,   6600,   6927,
   7569,   8533,   8845,   8878,   9064,   9291,   9959,
   10391,  10872,  11198,  11200,  11664,  11716,  12114)
-d <- dist(mydata, method = "euclidean") # distance matrix
-fit <- hclust(d, method="ward.D2") 
+canberra_dist <- dist(mydata, method = "canberra") # distance matrix
+fit <- hclust(d=canberra_dist, method="ward.D2") 
 plot(fit) # dendogram with p values
 
 # Ward Hierarchical Clustering with Bootstrapped p values
 library(pvclust)
 fit <- pvclust(t(mydata), method.hclust="ward.D2",
-               method.dist="euclidean")
+               method.dist="canberra")
 plot(fit) # dendogram with p values
 # add rectangles around groups highly supported by the data
-pvrect(fit, alpha=.95)
+pvrect(fit, alpha=.90)
