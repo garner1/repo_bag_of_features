@@ -28,7 +28,7 @@ datacloud = data[:,8:]
 # kmeans works well with euclidean distances, not others, (not good for hist).
 # It is good to scale data before in order not to bias on specif features.
 #==============================================================================
-datacloud = scale(datacloud)
+#datacloud = scale(datacloud)
 n_samples, n_features = datacloud.shape
 n_clusters = 20
 km = KMeans(n_clusters=n_clusters, init='k-means++', n_init=10, max_iter=100, 
@@ -53,19 +53,21 @@ for case in cases:
 #==============================================================================
 # Plot the histrogram
 #==============================================================================
-    plt.title(str(int(case)))
-#    plt.ylim([0,centroids_counts.max()])
-    plt.bar(xrange(len(centroids_counts)), centroids_counts)
-    plt.draw()
-    time.sleep(1.0)
-    plt.clf()
+#    plt.title(str(int(case)))
+##    plt.ylim([0,centroids_counts.max()])
+#    plt.bar(xrange(len(centroids_counts)), centroids_counts)
+#    plt.draw()
+#    time.sleep(1.0)
+#    plt.clf()
 #==============================================================================
 # Save the states
 #==============================================================================
-#np.save('./dataout/centroid_coord_a594',centroids)        
-#np.savetxt('dataout/bof_data_20clusters_a594.csv', np.vstack(states), delimiter=',')
-np.save('./dataout/centroid_coord_cy5',centroids)        
-np.savetxt('dataout/bof_data_20clusters_cy5.csv', np.vstack(states), delimiter=',')
+#np.save('./dataout/centroid_coord_a594_notScaled',centroids)        
+#np.save('./dataout/labels_a594_notScaled',labels)        
+#np.savetxt('dataout/bof_data_20clusters_a594_notScaled.csv', np.vstack(states), delimiter=',')
+np.save('./dataout/centroid_coord_cy5_notScaled',centroids)        
+np.save('./dataout/labels_cy5_notScaled',labels)        
+np.savetxt('dataout/bof_data_20clusters_cy5_notScaled.csv', np.vstack(states), delimiter=',')
 #==============================================================================
 # Efficient selection of case 
 #==============================================================================
