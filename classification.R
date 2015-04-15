@@ -1,4 +1,5 @@
 filename1 = 'dataout/bof_data_20clusters_a594.csv'
+# filename1 = 'dataout/bof_data_20clusters_a594_notScaled.csv'
 filename2 = 'dataout/bof_data_20clusters_cy5.csv'
 mydata1 = read.csv(filename1, header=FALSE)
 mydata2 = read.csv(filename2, header=FALSE)
