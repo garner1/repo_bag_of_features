@@ -50,4 +50,4 @@ for case in cases:
 
 output = np.vstack((output_a594,output_cy5))
 output = output.astype(np.float)
-np.savetxt('mytable', output, delimiter=' ')
+np.savetxt('mytable', output, fmt=['%u','%0.3u','%u','%u'] , delimiter=' ')
